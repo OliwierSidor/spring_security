@@ -1,0 +1,22 @@
+spring:
+  datasource:
+    url: jdbc:mysql://localhost:3306/arppl4_spring_security?serverTimezone=Europe/Warsaw&createDatabaseIfNotExist=true
+    username: root
+    password: root
+  jpa:
+    hibernate:
+      ddl-auto: update
+
+
+default:
+  roles:
+    - ADMIN
+    - USER
+    - MODERATOR
+  users:
+    - username: admin
+      password: nimda
+      roles: ADMIN, USER, MODERATOR
+    - username: user
+      password: user
+      roles: USER
