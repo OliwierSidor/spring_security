@@ -51,11 +51,7 @@ public class AuthenticationFilter extends UsernamePasswordAuthenticationFilter {
     }
 
     @Override
-    protected void successfulAuthentication(HttpServletRequest request,
-                                            HttpServletResponse response,
-                                            FilterChain chain,
-                                            Authentication authResult)
-            throws IOException, ServletException {
+    protected void successfulAuthentication(HttpServletRequest request, HttpServletResponse response, FilterChain chain, Authentication authResult) throws IOException, ServletException {
         ApplicationUser applicationUser;
         if (authResult.getPrincipal() instanceof ApplicationUser) {
             applicationUser = (ApplicationUser) authResult.getPrincipal();
@@ -63,20 +59,16 @@ public class AuthenticationFilter extends UsernamePasswordAuthenticationFilter {
             throw new RuntimeException("Wrong type!");
         }
 
-        String token = Jwts.builder()
-                .setClaims(new HashMap<>() {
-                    {
-                        put("app_name", SecurityConstans.APPLICATION_NAME);
-                        put("roles", applicationUser.getRoles().stream().map(ApplicationUserRole::getName).collect(Collectors.joining(SecurityConstans.ROLES_SEPARATOR)));
-                    }
-                })
-                .setSubject(applicationUser.getUsername())
-                .setExpiration(Timestamp.valueOf(LocalDateTime.now().plusDays(10)))
-                .signWith(SignatureAlgorithm.HS512, SecurityConstans.APPLICATION_KEY)
-                .compact();
+        String token = Jwts.builder().setClaims(new HashMap<>() {
+            {
+                put("app_name", SecurityConstants.APPLICATION_NAME);
+                put("roles", applicationUser.getRoles().stream().map(ApplicationUserRole::getName).collect(Collectors.joining(SecurityConstants.ROLES_SEPARATOR)));
+            }
+        }).setSubject(applicationUser.getUsername()).setExpiration(Timestamp.valueOf(LocalDateTime.now().plusDays(10))).signWith(SignatureAlgorithm.HS512, SecurityConstants.APPLICATION_KEY).compact();
 
-        response.addHeader(SecurityConstans.HEADER_EXPIRATION, String.valueOf(Timestamp.valueOf(LocalDateTime.now().plusDays(10))));
-        response.addHeader(SecurityConstans.HEADER_AUTH, SecurityConstans.HEADER_AUTH_BEARER + token);
-        response.addHeader(SecurityConstans.HEADER_ROLES, String.valueOf(applicationUser.getRoles()));
+        response.addHeader(SecurityConstants.HEADER_EXPIRATION, String.valueOf(Timestamp.valueOf(LocalDateTime.now().plusDays(10))));
+        response.addHeader(SecurityConstants.HEADER_AUTH, SecurityConstants.HEADER_AUTH_BEARER + token);
+        response.addHeader(SecurityConstants.HEADER_ROLES, String.valueOf(applicationUser.getRoles()));
+        response.addHeader("Access-Control-Expose-Headers", SecurityConstants.HEADER_ROLES + "," + SecurityConstants.HEADER_AUTH + "," + SecurityConstants.HEADER_EXPIRATION);
     }
 }

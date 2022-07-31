@@ -28,9 +28,9 @@ public class AuthorizationFilter extends BasicAuthenticationFilter {
     protected void doFilterInternal(HttpServletRequest request,
                                     HttpServletResponse response,
                                     FilterChain chain) throws IOException, ServletException {
-        String header = request.getHeader(SecurityConstans.HEADER_AUTH);
-        if (header != null && header.startsWith(SecurityConstans.HEADER_AUTH_BEARER)) {
-            String[] headerParts = header.split(SecurityConstans.BEARER_SEPARATOR);
+        String header = request.getHeader(SecurityConstants.HEADER_AUTH);
+        if (header != null && header.startsWith(SecurityConstants.HEADER_AUTH_BEARER)) {
+            String[] headerParts = header.split(SecurityConstants.BEARER_SEPARATOR);
             if (headerParts.length == 2) {
                 String headerToken = headerParts[1];
                 UsernamePasswordAuthenticationToken token = extractTokenFromJWT(headerToken);
@@ -42,14 +42,14 @@ public class AuthorizationFilter extends BasicAuthenticationFilter {
 
     private UsernamePasswordAuthenticationToken extractTokenFromJWT(String jwtToken) {
         Claims claims = Jwts.parser()
-                .setSigningKey(SecurityConstans.APPLICATION_KEY)
+                .setSigningKey(SecurityConstants.APPLICATION_KEY)
                 .parseClaimsJws(jwtToken)
                 .getBody();
 
         String username = claims.getSubject();
         String roles = claims.get("roles", String.class);
 
-        return new UsernamePasswordAuthenticationToken(username, null, Arrays.asList(roles.split(SecurityConstans.ROLES_SEPARATOR))
+        return new UsernamePasswordAuthenticationToken(username, null, Arrays.asList(roles.split(SecurityConstants.ROLES_SEPARATOR))
                 .stream().map((name) -> new SimpleGrantedAuthority("ROLE_" + name))
                 .collect(Collectors.toSet()));
 

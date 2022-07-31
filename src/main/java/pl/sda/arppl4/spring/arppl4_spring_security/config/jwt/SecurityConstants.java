@@ -1,6 +1,6 @@
 package pl.sda.arppl4.spring.arppl4_spring_security.config.jwt;
 
-public interface SecurityConstans {
+public interface SecurityConstants {
     String APPLICATION_NAME = "sPRINGsECURITY";
     String APPLICATION_KEY = "ArPpL4SeCrEt";
     String HEADER_AUTH = "Authorization"; // Standard
